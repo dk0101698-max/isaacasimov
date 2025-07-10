@@ -10,7 +10,6 @@ const LoginForm: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [buttonPosition, setButtonPosition] = useState('');
-  const [showValidationMsg, setShowValidationMsg] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { login } = useAuth();
 
@@ -23,11 +22,9 @@ const LoginForm: React.FC = () => {
       setShowValidationMsg('Please fill the input fields before proceeding');
       const currentIndex = positions.indexOf(buttonPosition);
       const nextIndex = (currentIndex + 1) % positions.length;
-      setButtonPosition(positions[nextIndex]);
       setIsButtonDisabled(true);
     } else {
       setShowValidationMsg('Great! Now you can proceed');
-      setButtonPosition('no-shift');
       setIsButtonDisabled(false);
     }
   };
@@ -36,11 +33,9 @@ const LoginForm: React.FC = () => {
     const isEmpty = email === '' || password === '';
     
     if (isEmpty) {
-      setShowValidationMsg('Please fill the input fields before proceeding');
       setIsButtonDisabled(true);
     } else {
       setShowValidationMsg('Great! Now you can proceed');
-      setButtonPosition('no-shift');
       setIsButtonDisabled(false);
     }
   };
@@ -60,7 +55,8 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isButtonDisabled) {
+    const isEmpty = email === '' || password === '';
+    if (isEmpty) {
       shiftButton();
       return;
     }
@@ -80,41 +76,53 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const handleButtonInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    const isEmpty = email === '' || password === '';
+    if (isEmpty) {
+      e.preventDefault();
+      shiftButton();
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-peacock-900 flex items-center justify-center p-4 relative overflow-hidden">
       <style>{`
         .btn-container {
           position: relative;
           width: 100%;
-          height: 60px;
+          height: 80px;
           display: flex;
           align-items: center;
           justify-content: center;
+          overflow: visible;
         }
         
         .login-button {
           position: absolute;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
         .shift-left {
-          transform: translateX(-50px);
+          transform: translateX(-60px);
         }
         
         .shift-top {
-          transform: translateY(-20px);
+          transform: translateY(-25px);
         }
         
         .shift-right {
-          transform: translateX(50px);
+          transform: translateX(60px);
         }
         
         .shift-bottom {
-          transform: translateY(20px);
+          transform: translateY(25px);
         }
         
         .no-shift {
           transform: translateX(0) translateY(0);
+        }
+        
+        .login-button:hover:not(.no-shift) {
+          transform: scale(0.95) !important;
         }
         
         .validation-msg {
@@ -123,6 +131,7 @@ const LoginForm: React.FC = () => {
           margin-bottom: 1rem;
           min-height: 1.25rem;
           transition: color 0.3s ease;
+          font-weight: 500;
         }
         
         .validation-msg.error {
@@ -257,12 +266,12 @@ const LoginForm: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-                disabled={isLoading}
-                onMouseEnter={shiftButton}
-                onTouchStart={shiftButton}
+              onMouseEnter={handleButtonInteraction}
+              onTouchStart={handleButtonInteraction}
+              onClick={handleButtonInteraction}
                 className={`login-button w-full group relative overflow-hidden bg-gradient-to-r from-peacock-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${buttonPosition}`}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-peacock-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className={`absolute inset-0 bg-gradient-to-r from-peacock-600 to-blue-600 opacity-0 ${buttonPosition === 'no-shift' ? 'group-hover:opacity-100' : ''} transition-opacity duration-300`}></div>
               <div className="relative z-10 flex items-center justify-center gap-3">
                 {isLoading ? (
                   <>
