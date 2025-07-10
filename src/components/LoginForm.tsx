@@ -11,6 +11,7 @@ const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [buttonPosition, setButtonPosition] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [showValidationMsg, setShowValidationMsg] = useState('');
   const { login } = useAuth();
 
   const positions = ['shift-left', 'shift-top', 'shift-right', 'shift-bottom'];
