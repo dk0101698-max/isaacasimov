@@ -179,16 +179,8 @@ const LoginForm: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
-            className="mt-8 space-y-4"
+            className="mt-8"
           >
-            <div className="bg-gradient-to-r from-peacock-500/10 to-blue-500/10 rounded-xl border border-peacock-500/20 p-4">
-              <h4 className="text-peacock-400 font-semibold mb-2 text-sm">📋 Login Instructions:</h4>
-              <div className="text-xs text-peacock-300 space-y-1">
-                <p><strong>User ID Format:</strong> "Your name"-"your Dept"-"last four digit of your Roll No"</p>
-                <p><strong>Password:</strong> issacasimov (for students) | ralab (for admin)</p>
-              </div>
-            </div>
-            
             <div className="text-center text-xs text-dark-400">
               <p>© 2024 Isaac Asimov Robotics Lab. All rights reserved.</p>
             </div>
