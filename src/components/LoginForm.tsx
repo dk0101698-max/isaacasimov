@@ -9,8 +9,45 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState('');
+  const [showValidationMsg, setShowValidationMsg] = useState('');
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { login } = useAuth();
 
+  const positions = ['shift-left', 'shift-top', 'shift-right', 'shift-bottom'];
+
+  const shiftButton = () => {
+    const isEmpty = email === '' || password === '';
+    
+    if (isEmpty) {
+      setShowValidationMsg('Please fill the input fields before proceeding');
+      const currentIndex = positions.indexOf(buttonPosition);
+      const nextIndex = (currentIndex + 1) % positions.length;
+      setButtonPosition(positions[nextIndex]);
+      setIsButtonDisabled(true);
+    } else {
+      setShowValidationMsg('Great! Now you can proceed');
+      setButtonPosition('no-shift');
+      setIsButtonDisabled(false);
+    }
+  };
+
+  const handleInputChange = () => {
+    const isEmpty = email === '' || password === '';
+    
+    if (isEmpty) {
+      setShowValidationMsg('Please fill the input fields before proceeding');
+      setIsButtonDisabled(true);
+    } else {
+      setShowValidationMsg('Great! Now you can proceed');
+      setButtonPosition('no-shift');
+      setIsButtonDisabled(false);
+    }
+  };
+
+  React.useEffect(() => {
+    handleInputChange();
+  }, [email, password]);
   const handleNameChange = (name: string) => {
     const cleanName = name.toLowerCase().replace(/\s+/g, '.');
     if (cleanName && !cleanName.includes('@')) {
@@ -22,6 +59,12 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isButtonDisabled) {
+      shiftButton();
+      return;
+    }
+    
     setError('');
     setIsLoading(true);
 
@@ -39,6 +82,58 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-peacock-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <style>{`
+        .btn-container {
+          position: relative;
+          width: 100%;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .login-button {
+          position: absolute;
+          transition: all 0.3s ease;
+        }
+        
+        .shift-left {
+          transform: translateX(-50px);
+        }
+        
+        .shift-top {
+          transform: translateY(-20px);
+        }
+        
+        .shift-right {
+          transform: translateX(50px);
+        }
+        
+        .shift-bottom {
+          transform: translateY(20px);
+        }
+        
+        .no-shift {
+          transform: translateX(0) translateY(0);
+        }
+        
+        .validation-msg {
+          text-align: center;
+          font-size: 0.875rem;
+          margin-bottom: 1rem;
+          min-height: 1.25rem;
+          transition: color 0.3s ease;
+        }
+        
+        .validation-msg.error {
+          color: rgb(248 113 113);
+        }
+        
+        .validation-msg.success {
+          color: rgb(74 222 128);
+        }
+      `}</style>
+      
       {/* Background Animation */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-peacock-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -81,6 +176,11 @@ const LoginForm: React.FC = () => {
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Validation Message */}
+            <div className={`validation-msg ${showValidationMsg.includes('Please') ? 'error' : showValidationMsg.includes('Great') ? 'success' : ''}`}>
+              {showValidationMsg}
+            </div>
+
             <motion.div
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -148,6 +248,7 @@ const LoginForm: React.FC = () => {
               </motion.div>
             )}
 
+            <div className="btn-container">
             <motion.button
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -156,7 +257,10 @@ const LoginForm: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="w-full group relative overflow-hidden bg-gradient-to-r from-peacock-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                onMouseEnter={shiftButton}
+                onTouchStart={shiftButton}
+                className={`login-button w-full group relative overflow-hidden bg-gradient-to-r from-peacock-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${buttonPosition}`}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-peacock-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10 flex items-center justify-center gap-3">
@@ -173,6 +277,7 @@ const LoginForm: React.FC = () => {
                 )}
               </div>
             </motion.button>
+            </div>
           </form>
 
           <motion.div
