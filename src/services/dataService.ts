@@ -1,4 +1,4 @@
-import { SystemData, User, Component, BorrowRequest, Notification, LoginSession, SystemStats } from '../types';
+import { SystemData, User, Component, ComponentIssue, Notification, LoginSession, SystemStats } from '../types';
 
 class DataService {
   private storageKey = 'isaacLabData';
@@ -9,8 +9,8 @@ class DataService {
         {
           id: 'admin-1',
           name: 'Administrator',
-          email: 'admin@issacasimov.in',
-          role: 'admin',
+          email: 'staff@issacasimov.in',
+          role: 'staff',
           registeredAt: new Date().toISOString(),
           loginCount: 0,
           isActive: false
@@ -58,7 +58,7 @@ class DataService {
           description: 'WiFi and Bluetooth enabled microcontroller'
         }
       ],
-      requests: [],
+      componentIssues: [],
       notifications: [],
       loginSessions: []
     };
@@ -72,6 +72,19 @@ class DataService {
         // Ensure loginSessions exists for backward compatibility
         if (!parsedData.loginSessions) {
           parsedData.loginSessions = [];
+        }
+        // Migrate old requests to componentIssues for backward compatibility
+        if (parsedData.requests && !parsedData.componentIssues) {
+          parsedData.componentIssues = parsedData.requests.map((req: any) => ({
+            ...req,
+            issueDate: req.requestDate,
+            purpose: req.notes || 'Lab work',
+            issuedBy: 'Staff',
+            status: req.status === 'approved' ? 'issued' : req.status === 'returned' ? 'returned' : 'issued'
+          }));
+        }
+        if (!parsedData.componentIssues) {
+          parsedData.componentIssues = [];
         }
         return parsedData;
       }
@@ -113,7 +126,7 @@ class DataService {
   }
 
   authenticateUser(email: string, password: string): User | null {
-    const expectedPassword = email === 'admin@issacasimov.in' ? 'ralab' : 'issacasimov';
+    const expectedPassword = 'ralab';
     
     if (password !== expectedPassword) {
       return null;
@@ -121,14 +134,13 @@ class DataService {
 
     let user = this.getUser(email);
     
-    if (!user && email.endsWith('@issacasimov.in') && email !== 'admin@issacasimov.in') {
-      // Create new student user
-      const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    if (!user && email === 'staff@issacasimov.in') {
+      // Create staff user
       user = {
-        id: `user-${Date.now()}`,
-        name,
+        id: `staff-${Date.now()}`,
+        name: 'Lab Staff',
         email,
-        role: 'student',
+        role: 'staff',
         registeredAt: new Date().toISOString(),
         loginCount: 0,
         isActive: true
@@ -231,28 +243,28 @@ class DataService {
     this.saveData(data);
   }
 
-  // Request operations
-  addRequest(request: BorrowRequest): void {
+  // Component Issue operations
+  addComponentIssue(issue: ComponentIssue): void {
     const data = this.getData();
-    data.requests.push(request);
+    data.componentIssues.push(issue);
     this.saveData(data);
   }
 
-  updateRequest(request: BorrowRequest): void {
+  updateComponentIssue(issue: ComponentIssue): void {
     const data = this.getData();
-    const index = data.requests.findIndex(r => r.id === request.id);
+    const index = data.componentIssues.findIndex(i => i.id === issue.id);
     if (index !== -1) {
-      data.requests[index] = request;
+      data.componentIssues[index] = issue;
       this.saveData(data);
     }
   }
 
-  getRequests(): BorrowRequest[] {
-    return this.getData().requests;
+  getComponentIssues(): ComponentIssue[] {
+    return this.getData().componentIssues;
   }
 
-  getUserRequests(userId: string): BorrowRequest[] {
-    return this.getData().requests.filter(r => r.studentId === userId);
+  getStudentIssues(studentName: string): ComponentIssue[] {
+    return this.getData().componentIssues.filter(i => i.studentName === studentName);
   }
 
   // Notification operations
@@ -278,20 +290,18 @@ class DataService {
   // System statistics
   getSystemStats(): SystemStats {
     const data = this.getData();
-    const now = new Date();
-    const overdueItems = data.requests.filter(r => 
-      r.status === 'approved' && new Date(r.dueDate) < now
-    );
 
     return {
       totalUsers: data.users.length,
       activeUsers: data.users.filter(u => u.isActive).length,
       totalLogins: data.users.reduce((sum, u) => sum + (u.loginCount || 0), 0),
       onlineUsers: data.loginSessions.filter(s => s.isActive).length,
-      totalRequests: data.requests.length,
-      pendingRequests: data.requests.filter(r => r.status === 'pending').length,
       totalComponents: data.components.length,
-      overdueItems: overdueItems.length
+      issuedComponents: data.componentIssues.filter(i => i.status === 'issued').length,
+      returnedComponents: data.componentIssues.filter(i => i.status === 'returned').length,
+      overdueItems: data.componentIssues.filter(i => 
+        i.status === 'issued' && new Date(i.dueDate) < new Date()
+      ).length
     };
   }
 
@@ -325,6 +335,33 @@ class DataService {
       .join('\n');
 
     return csvContent;
+  }
+
+  // Legacy methods for backward compatibility
+  getRequests(): ComponentIssue[] {
+    return this.getComponentIssues();
+  }
+
+  addRequest(request: any): void {
+    const issue: ComponentIssue = {
+      ...request,
+      issueDate: request.requestDate,
+      purpose: request.notes || 'Lab work',
+      issuedBy: 'Staff',
+      status: request.status === 'approved' ? 'issued' : request.status === 'returned' ? 'returned' : 'issued'
+    };
+    this.addComponentIssue(issue);
+  }
+
+  updateRequest(request: any): void {
+    const issue: ComponentIssue = {
+      ...request,
+      issueDate: request.requestDate,
+      purpose: request.notes || 'Lab work',
+      issuedBy: 'Staff',
+      status: request.status === 'approved' ? 'issued' : request.status === 'returned' ? 'returned' : 'issued'
+    };
+    this.updateComponentIssue(issue);
   }
 }
 

@@ -54,7 +54,7 @@ const Header: React.FC = () => {
               <h1 className="text-white font-bold text-lg">Isaac Asimov Lab</h1>
               <div className="flex items-center gap-2">
                 <p className="text-peacock-300 text-sm">
-                  {user.role === 'admin' ? 'Admin Dashboard' : 'Student Portal'}
+                  Inventory Management
                 </p>
                 {/* Network Status Indicator */}
                 <motion.div
@@ -75,22 +75,20 @@ const Header: React.FC = () => {
 
           <div className="flex items-center gap-4">
             {/* Online Users Count */}
-            {user.role === 'admin' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 px-3 py-2 rounded-full backdrop-blur-sm"
-              >
-                <Users className="w-4 h-4 text-green-400" />
-                <span className="text-green-400 text-sm font-medium">
-                  {onlineCount} online
-                </span>
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 px-3 py-2 rounded-full backdrop-blur-sm"
+            >
+              <Users className="w-4 h-4 text-green-400" />
+              <span className="text-green-400 text-sm font-medium">
+                Staff Online
+              </span>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            </motion.div>
 
-            <NotificationBell />
+            {/* <NotificationBell /> */}
             
             <div className="flex items-center gap-3">
               <div className="text-right">

@@ -2,8 +2,7 @@ import React from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginForm from './components/LoginForm';
 import Header from './components/Header';
-import StudentDashboard from './components/student/StudentDashboard';
-import AdminDashboard from './components/admin/AdminDashboard';
+import MainDashboard from './components/MainDashboard';
 
 const AppContent: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -23,7 +22,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-dark-950">
       <Header />
-      {user.role === 'admin' ? <AdminDashboard /> : <StudentDashboard />}
+      <MainDashboard />
     </div>
   );
 };

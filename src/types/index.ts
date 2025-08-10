@@ -2,9 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'admin';
-  rollNo?: string;
-  mobile?: string;
+  role: 'staff';
   registeredAt: string;
   lastLoginAt?: string;
   loginCount?: number;
@@ -20,22 +18,20 @@ export interface Component {
   description?: string;
 }
 
-export interface BorrowRequest {
+export interface ComponentIssue {
   id: string;
-  studentId: string;
   studentName: string;
   rollNo: string;
   mobile: string;
   componentId: string;
   componentName: string;
   quantity: number;
-  requestDate: string;
+  issueDate: string;
   dueDate: string;
-  status: 'pending' | 'approved' | 'rejected' | 'returned';
-  approvedBy?: string;
-  approvedAt?: string;
-  returnedAt?: string;
-  notes?: string;
+  status: 'issued' | 'returned';
+  returnDate?: string;
+  purpose: string;
+  issuedBy: string;
 }
 
 export interface Notification {
@@ -53,7 +49,7 @@ export interface LoginSession {
   userId: string;
   userEmail: string;
   userName: string;
-  userRole: 'student' | 'admin';
+  userRole: 'staff';
   loginTime: string;
   logoutTime?: string;
   ipAddress?: string;
@@ -66,7 +62,7 @@ export interface LoginSession {
 export interface SystemData {
   users: User[];
   components: Component[];
-  requests: BorrowRequest[];
+  componentIssues: ComponentIssue[];
   notifications: Notification[];
   loginSessions: LoginSession[];
 }
@@ -76,8 +72,11 @@ export interface SystemStats {
   activeUsers: number;
   totalLogins: number;
   onlineUsers: number;
-  totalRequests: number;
-  pendingRequests: number;
   totalComponents: number;
+  issuedComponents: number;
+  returnedComponents: number;
   overdueItems: number;
 }
+
+// Legacy types for backward compatibility
+export interface BorrowRequest extends ComponentIssue {}

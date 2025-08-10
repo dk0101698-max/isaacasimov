@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Package, User, Phone, Calendar, Hash, CheckCircle } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { dataService } from '../../services/dataService';
-import { Component, BorrowRequest } from '../../types';
+import { UserPlus, Package, User, Phone, Hash, Calendar, CheckCircle } from 'lucide-react';
+import { dataService } from '../services/dataService';
+import { Component, ComponentIssue } from '../types';
 
-const BorrowForm: React.FC = () => {
-  const { user } = useAuth();
+const IssueComponent: React.FC = () => {
   const [components, setComponents] = useState<Component[]>([]);
   const [formData, setFormData] = useState({
+    studentName: '',
     rollNo: '',
     mobile: '',
     componentId: '',
     quantity: 1,
     dueDate: '',
+    purpose: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
-    setComponents(dataService.getComponents());
+    loadComponents();
   }, []);
 
   useEffect(() => {
     if (notification) {
-      const timer = setTimeout(() => setNotification(null), 6000);
+      const timer = setTimeout(() => setNotification(null), 5000);
       return () => clearTimeout(timer);
     }
   }, [notification]);
 
+  const loadComponents = () => {
+    setComponents(dataService.getComponents());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-
     setIsSubmitting(true);
 
     try {
@@ -45,50 +47,48 @@ const BorrowForm: React.FC = () => {
         throw new Error('Not enough components available');
       }
 
-      const request: BorrowRequest = {
-        id: `req-${Date.now()}`,
-        studentId: user.id,
-        studentName: user.name,
+      // Create component issue record
+      const issue: ComponentIssue = {
+        id: `issue-${Date.now()}`,
+        studentName: formData.studentName,
         rollNo: formData.rollNo,
         mobile: formData.mobile,
         componentId: selectedComponent.id,
         componentName: selectedComponent.name,
         quantity: formData.quantity,
-        requestDate: new Date().toISOString(),
+        issueDate: new Date().toISOString(),
         dueDate: formData.dueDate,
-        status: 'pending',
+        purpose: formData.purpose,
+        status: 'issued',
+        issuedBy: 'Staff',
       };
 
-      dataService.addRequest(request);
-
-      // Add notification for admin
-      dataService.addNotification({
-        id: `notif-${Date.now()}`,
-        userId: 'admin-1',
-        title: 'New Component Request',
-        message: `${user.name} has requested ${formData.quantity} ${selectedComponent.name}. Review and approve in the admin panel.`,
-        type: 'info',
-        read: false,
-        createdAt: new Date().toISOString(),
-      });
+      // Update component availability
+      selectedComponent.availableQuantity -= formData.quantity;
+      dataService.updateComponent(selectedComponent);
+      dataService.addComponentIssue(issue);
 
       setNotification({
         type: 'success',
-        message: 'Request submitted successfully! You will be notified once the admin reviews your request.',
+        message: `Component issued successfully to ${formData.studentName}!`,
       });
 
       // Reset form
       setFormData({
+        studentName: '',
         rollNo: '',
         mobile: '',
         componentId: '',
         quantity: 1,
         dueDate: '',
+        purpose: '',
       });
+
+      loadComponents();
     } catch (error) {
       setNotification({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Failed to submit request',
+        message: error instanceof Error ? error.message : 'Failed to issue component',
       });
     } finally {
       setIsSubmitting(false);
@@ -101,11 +101,11 @@ const BorrowForm: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-3xl mx-auto"
+      className="max-w-4xl mx-auto"
     >
       <div className="relative overflow-hidden bg-dark-800/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-peacock-500/20 p-8">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-peacock-500/5 to-blue-500/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5"></div>
         
         <div className="relative z-10">
           {/* Header */}
@@ -118,14 +118,14 @@ const BorrowForm: React.FC = () => {
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-peacock-500 to-blue-500 rounded-2xl mb-6 shadow-lg animate-glow"
+              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl mb-6 shadow-lg animate-glow"
             >
-              <Package className="w-10 h-10 text-white" />
+              <UserPlus className="w-10 h-10 text-white" />
             </motion.div>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-3">
-              Submit Component Request
+              Issue Component to Student
             </h2>
-            <p className="text-peacock-300 text-lg">Request lab components for your robotics projects</p>
+            <p className="text-peacock-300 text-lg">Directly issue lab components to students</p>
           </motion.div>
 
           {/* Notification */}
@@ -148,13 +148,30 @@ const BorrowForm: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Personal Information */}
+            {/* Student Information */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
+              <div className="space-y-2">
+                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                  Student Name
+                </label>
+                <div className="relative group">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
+                  <input
+                    type="text"
+                    value={formData.studentName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, studentName: e.target.value }))}
+                    className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
+                    placeholder="Enter student name"
+                    required
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label className="block text-peacock-300 text-sm font-semibold mb-2">
                   Roll Number
@@ -166,7 +183,7 @@ const BorrowForm: React.FC = () => {
                     value={formData.rollNo}
                     onChange={(e) => setFormData(prev => ({ ...prev, rollNo: e.target.value }))}
                     className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
-                    placeholder="Enter your roll number"
+                    placeholder="Enter roll number"
                     required
                   />
                 </div>
@@ -183,7 +200,7 @@ const BorrowForm: React.FC = () => {
                     value={formData.mobile}
                     onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
                     className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
-                    placeholder="Enter your mobile number"
+                    placeholder="Enter mobile number"
                     required
                   />
                 </div>
@@ -207,7 +224,7 @@ const BorrowForm: React.FC = () => {
                 required
               >
                 <option value="">Select a component</option>
-                {components.map(component => (
+                {components.filter(c => c.availableQuantity > 0).map(component => (
                   <option key={component.id} value={component.id}>
                     {component.name} (Available: {component.availableQuantity})
                   </option>
@@ -221,11 +238,11 @@ const BorrowForm: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ duration: 0.3 }}
-                className="bg-gradient-to-r from-peacock-500/10 to-blue-500/10 p-6 rounded-xl border border-peacock-500/20"
+                className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-6 rounded-xl border border-green-500/20"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 bg-peacock-500/20 rounded-xl">
-                    <Package className="w-6 h-6 text-peacock-400" />
+                  <div className="p-3 bg-green-500/20 rounded-xl">
+                    <Package className="w-6 h-6 text-green-400" />
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg">{selectedComponent.name}</h4>
@@ -244,12 +261,12 @@ const BorrowForm: React.FC = () => {
               </motion.div>
             )}
 
-            {/* Quantity and Due Date */}
+            {/* Quantity, Due Date, and Purpose */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               <div className="space-y-2">
                 <label className="block text-peacock-300 text-sm font-semibold mb-2">
@@ -282,6 +299,20 @@ const BorrowForm: React.FC = () => {
                   />
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                  Purpose
+                </label>
+                <input
+                  type="text"
+                  value={formData.purpose}
+                  onChange={(e) => setFormData(prev => ({ ...prev, purpose: e.target.value }))}
+                  className="w-full px-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500"
+                  placeholder="Project/Lab purpose"
+                  required
+                />
+              </div>
             </motion.div>
 
             {/* Submit Button */}
@@ -289,16 +320,16 @@ const BorrowForm: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              whileHover={{ scale: 1.02, boxShadow: '0 10px 30px rgba(0, 206, 209, 0.3)' }}
+              whileHover={{ scale: 1.02, boxShadow: '0 10px 30px rgba(34, 197, 94, 0.3)' }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isSubmitting || !formData.componentId}
-              className="w-full group relative overflow-hidden bg-gradient-to-r from-peacock-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-peacock-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10 flex items-center justify-center gap-3">
-                <Send className="w-6 h-6 group-hover:animate-bounce" />
-                {isSubmitting ? 'Submitting Request...' : 'Submit Request'}
+                <UserPlus className="w-6 h-6 group-hover:animate-bounce" />
+                {isSubmitting ? 'Issuing Component...' : 'Issue Component'}
               </div>
             </motion.button>
           </form>
@@ -308,4 +339,4 @@ const BorrowForm: React.FC = () => {
   );
 };
 
-export default BorrowForm;
+export default IssueComponent;

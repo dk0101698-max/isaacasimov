@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, User, Lock, Cpu, Shield, Users } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, Cpu, Shield, Package } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const LoginForm: React.FC = () => {
@@ -45,12 +45,7 @@ const LoginForm: React.FC = () => {
     handleInputChange();
   }, [email, password]);
   const handleNameChange = (name: string) => {
-    const cleanName = name.toLowerCase().replace(/\s+/g, '.');
-    if (cleanName && !cleanName.includes('@')) {
-      setEmail(cleanName + '@issacasimov.in');
-    } else {
-      setEmail(cleanName);
-    }
+    setEmail(name);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -172,15 +167,15 @@ const LoginForm: React.FC = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-2">
               Isaac Asimov
             </h1>
-            <p className="text-peacock-300 text-lg font-medium">Robotics Lab Management</p>
+            <p className="text-peacock-300 text-lg font-medium">Inventory Management System</p>
             <div className="flex items-center justify-center gap-4 mt-4">
               <div className="flex items-center gap-2 text-peacock-400 text-sm">
                 <Shield className="w-4 h-4" />
-                <span>Secure Access</span>
+                <span>Staff Access</span>
               </div>
               <div className="flex items-center gap-2 text-peacock-400 text-sm">
-                <Users className="w-4 h-4" />
-                <span>Multi-Role</span>
+                <Package className="w-4 h-4" />
+                <span>Inventory</span>
               </div>
             </div>
           </motion.div>
@@ -197,23 +192,18 @@ const LoginForm: React.FC = () => {
               transition={{ delay: 0.3, duration: 0.5 }}
             >
               <label className="block text-peacock-300 text-sm font-semibold mb-3">
-                User ID
+                Staff Email
               </label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
                 <input
-                  type="text"
-                  value={email.replace('@issacasimov.in', '')}
+                  type="email"
+                  value={email}
                   onChange={(e) => handleNameChange(e.target.value)}
                   className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
-                  placeholder="eg: dilipkumar-ra-1015"
+                  placeholder="staff@issacasimov.in"
                   required
                 />
-                {email && email !== email.replace('@issacasimov.in', '') && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-peacock-400 text-sm font-medium">
-                    @issacasimov.in
-                  </div>
-                )}
               </div>
             </motion.div>
 
@@ -297,7 +287,7 @@ const LoginForm: React.FC = () => {
             className="mt-8"
           >
             <div className="text-center text-xs text-dark-400">
-              <p>© 2024 Isaac Asimov Robotics Lab. All rights reserved.</p>
+              <p>© 2024 Isaac Asimov Lab Inventory System. All rights reserved.</p>
             </div>
           </motion.div>
         </div>
