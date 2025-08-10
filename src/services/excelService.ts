@@ -916,12 +916,19 @@ export class ExcelService {
     });
   }
 
+  private calculateInventoryUtilization(components: Component[]): string {
+    const totalUnits = components.reduce((sum, c) => sum + c.totalQuantity, 0);
+    const availableUnits = components.reduce((sum, c) => sum + c.availableQuantity, 0);
+    const utilizationRate = totalUnits > 0 ? (((totalUnits - availableUnits) / totalUnits) * 100).toFixed(1) : '0.0';
+    return `${utilizationRate}% Active Usage`;
+  }
+
   private getPerformanceRating(current: number, target: number): string {
     const percentage = (current / target) * 100;
-    if (percentage >= 90) return '⭐⭐⭐ Excellent';
-    if (percentage >= 70) return '⭐⭐ Good';
-    if (percentage >= 50) return '⭐ Average';
-    return '❌ Needs Improvement';
+    if (percentage >= 90) return '🏆 Exceptional Performance';
+    if (percentage >= 70) return '⭐ Above Target - Excellent';
+    if (percentage >= 50) return '📊 Meeting Expectations';
+    return '⚠️ Below Target - Action Required';
   }
 
   private calculateAverageDuration(requests: BorrowRequest[]): string {
