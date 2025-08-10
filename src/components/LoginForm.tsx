@@ -45,7 +45,14 @@ const LoginForm: React.FC = () => {
     handleInputChange();
   }, [email, password]);
   const handleNameChange = (name: string) => {
-    setEmail(name);
+    // Auto-fill email domain for common usernames
+    if (name === 'admin' || name === 'staff') {
+      setEmail(`${name}@isaacasimov.in`);
+    } else if (name.includes('@')) {
+      setEmail(name);
+    } else {
+      setEmail(name);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
