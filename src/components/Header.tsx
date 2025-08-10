@@ -9,6 +9,7 @@ const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const [onlineCount, setOnlineCount] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const updateOnlineCount = () => {
@@ -42,25 +43,25 @@ const Header: React.FC = () => {
       className="bg-dark-800/95 backdrop-blur-lg border-b border-dark-700/50 sticky top-0 z-40 shadow-lg"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           <div className="flex items-center gap-3">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-peacock-500 to-blue-500 rounded-lg shadow-lg"
+              className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-peacock-500 to-blue-500 rounded-lg shadow-lg"
             >
-              <Cpu className="w-6 h-6 text-white" />
+              <Cpu className="w-4 h-4 md:w-6 md:h-6 text-white" />
             </motion.div>
             <div>
-              <h1 className="text-white font-bold text-lg">Isaac Asimov Lab</h1>
+              <h1 className="text-white font-bold text-sm md:text-lg">Isaac Asimov Lab</h1>
               <div className="flex items-center gap-2">
-                <p className="text-peacock-300 text-sm">
+                <p className="text-peacock-300 text-xs md:text-sm">
                   Inventory Management
                 </p>
                 {/* Network Status Indicator */}
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+                  className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
                     isOnline 
                       ? 'bg-green-500/20 text-green-400' 
                       : 'bg-red-500/20 text-red-400'
@@ -73,13 +74,13 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Online Users Count */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
-              className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 px-3 py-2 rounded-full backdrop-blur-sm"
+              className="hidden lg:flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 px-3 py-2 rounded-full backdrop-blur-sm"
             >
               <Users className="w-4 h-4 text-green-400" />
               <span className="text-green-400 text-sm font-medium">
@@ -90,11 +91,11 @@ const Header: React.FC = () => {
 
             {/* <NotificationBell /> */}
             
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-white font-medium">{user.name}</p>
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="text-right hidden md:block">
+                <p className="text-white font-medium text-sm">{user.name}</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-peacock-300 text-sm">{user.email}</p>
+                  <p className="text-peacock-300 text-xs">{user.email}</p>
                   {user.isActive && (
                     <motion.div 
                       animate={{ scale: [1, 1.2, 1] }}
@@ -109,10 +110,10 @@ const Header: React.FC = () => {
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={logout}
-                className="p-2 text-peacock-300 hover:text-peacock-200 hover:bg-dark-700/70 rounded-lg transition-all duration-200 group"
+                className="p-2 md:p-3 text-peacock-300 hover:text-peacock-200 hover:bg-dark-700/70 rounded-lg transition-all duration-200 group"
                 title="Logout"
               >
-                <LogOut className="w-5 h-5 group-hover:animate-pulse" />
+                <LogOut className="w-4 h-4 md:w-5 md:h-5 group-hover:animate-pulse" />
               </motion.button>
             </div>
           </div>

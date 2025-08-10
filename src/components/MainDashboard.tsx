@@ -45,16 +45,16 @@ const MainDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-950 via-dark-900 to-peacock-900/50">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-4 md:mb-8"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-2">
             Isaac Asimov Lab Inventory
           </h1>
-          <p className="text-peacock-300 text-lg">Manage components, issue to students, and track inventory</p>
+          <p className="text-peacock-300 text-sm md:text-base lg:text-lg">Manage components, issue to students, and track inventory</p>
         </motion.div>
 
         {/* Tab Navigation */}
@@ -62,9 +62,9 @@ const MainDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8"
+          className="mb-4 md:mb-8"
         >
-          <div className="flex flex-wrap gap-3 bg-dark-800/50 p-3 rounded-2xl backdrop-blur-xl border border-dark-700">
+          <div className="flex flex-wrap gap-2 md:gap-3 bg-dark-800/50 p-2 md:p-3 rounded-xl md:rounded-2xl backdrop-blur-xl border border-dark-700 overflow-x-auto">
             {tabs.map((tab, index) => {
               const Icon = tab.icon;
               return (
@@ -73,7 +73,7 @@ const MainDashboard: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative overflow-hidden flex items-center gap-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                  className={`relative overflow-hidden flex items-center gap-2 md:gap-3 px-3 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
                     activeTab === tab.id
                       ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
                       : 'text-peacock-300 hover:text-white hover:bg-dark-700/70'
@@ -85,12 +85,12 @@ const MainDashboard: React.FC = () => {
                   {activeTab === tab.id && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-xl"
+                      className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-lg md:rounded-xl"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <Icon className="w-5 h-5 relative z-10" />
-                  <span className="hidden sm:inline relative z-10">{tab.label}</span>
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 relative z-10" />
+                  <span className="text-xs md:text-sm relative z-10">{tab.label}</span>
                 </motion.button>
               );
             })}

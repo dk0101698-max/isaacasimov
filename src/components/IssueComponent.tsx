@@ -101,9 +101,9 @@ const IssueComponent: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-4xl mx-auto"
+      className="max-w-4xl mx-auto px-2 md:px-0"
     >
-      <div className="relative overflow-hidden bg-dark-800/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-peacock-500/20 p-8">
+      <div className="relative overflow-hidden bg-dark-800/50 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-peacock-500/20 p-4 md:p-8">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5"></div>
         
@@ -112,20 +112,20 @@ const IssueComponent: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            className="text-center mb-6 md:mb-8"
           >
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl mb-6 shadow-lg animate-glow"
+              className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl md:rounded-2xl mb-4 md:mb-6 shadow-lg animate-glow"
             >
-              <UserPlus className="w-10 h-10 text-white" />
+              <UserPlus className="w-8 h-8 md:w-10 md:h-10 text-white" />
             </motion.div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-3">
+            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-peacock-200 bg-clip-text text-transparent mb-2 md:mb-3">
               Issue Component to Student
             </h2>
-            <p className="text-peacock-300 text-lg">Directly issue lab components to students</p>
+            <p className="text-peacock-300 text-sm md:text-lg">Directly issue lab components to students</p>
           </motion.div>
 
           {/* Notification */}
@@ -134,38 +134,38 @@ const IssueComponent: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              className={`mb-6 p-4 rounded-xl border backdrop-blur-sm ${
+              className={`mb-4 md:mb-6 p-3 md:p-4 rounded-lg md:rounded-xl border backdrop-blur-sm ${
                 notification.type === 'success'
                   ? 'bg-green-500/10 border-green-500/20 text-green-400'
                   : 'bg-red-500/10 border-red-500/20 text-red-400'
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 {notification.type === 'success' && <CheckCircle className="w-5 h-5" />}
-                <span className="font-medium">{notification.message}</span>
+                <span className="font-medium text-sm md:text-base">{notification.message}</span>
               </div>
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
             {/* Student Information */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
             >
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Student Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-peacock-300 transition-colors" />
                   <input
                     type="text"
                     value={formData.studentName}
                     onChange={(e) => setFormData(prev => ({ ...prev, studentName: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
+                    className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500 text-sm md:text-base"
                     placeholder="Enter student name"
                     required
                   />
@@ -173,16 +173,16 @@ const IssueComponent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Roll Number
                 </label>
                 <div className="relative group">
-                  <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
+                  <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-peacock-300 transition-colors" />
                   <input
                     type="text"
                     value={formData.rollNo}
                     onChange={(e) => setFormData(prev => ({ ...prev, rollNo: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
+                    className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500 text-sm md:text-base"
                     placeholder="Enter roll number"
                     required
                   />
@@ -190,16 +190,16 @@ const IssueComponent: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Mobile Number
                 </label>
                 <div className="relative group">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-peacock-300 transition-colors" />
                   <input
                     type="tel"
                     value={formData.mobile}
                     onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
+                    className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500 text-sm md:text-base"
                     placeholder="Enter mobile number"
                     required
                   />
@@ -214,13 +214,13 @@ const IssueComponent: React.FC = () => {
               transition={{ delay: 0.4 }}
               className="space-y-2"
             >
-              <label className="block text-peacock-300 text-sm font-semibold mb-2">
+              <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                 Component
               </label>
               <select
                 value={formData.componentId}
                 onChange={(e) => setFormData(prev => ({ ...prev, componentId: e.target.value }))}
-                className="w-full px-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500"
+                className="w-full px-3 md:px-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500 text-sm md:text-base"
                 required
               >
                 <option value="">Select a component</option>
@@ -238,19 +238,19 @@ const IssueComponent: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ duration: 0.3 }}
-                className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-6 rounded-xl border border-green-500/20"
+                className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 md:p-6 rounded-lg md:rounded-xl border border-green-500/20"
               >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 bg-green-500/20 rounded-xl">
-                    <Package className="w-6 h-6 text-green-400" />
+                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                  <div className="p-2 md:p-3 bg-green-500/20 rounded-lg md:rounded-xl">
+                    <Package className="w-5 h-5 md:w-6 md:h-6 text-green-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">{selectedComponent.name}</h4>
-                    <p className="text-peacock-300">{selectedComponent.category}</p>
+                    <h4 className="text-white font-bold text-base md:text-lg">{selectedComponent.name}</h4>
+                    <p className="text-peacock-300 text-sm md:text-base">{selectedComponent.category}</p>
                   </div>
                 </div>
-                <p className="text-peacock-200 text-sm mb-3">{selectedComponent.description}</p>
-                <div className="flex items-center gap-4 text-sm">
+                <p className="text-peacock-200 text-xs md:text-sm mb-2 md:mb-3">{selectedComponent.description}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs md:text-sm">
                   <span className="text-green-400 font-semibold">
                     ✅ Available: {selectedComponent.availableQuantity} units
                   </span>
@@ -266,10 +266,10 @@ const IssueComponent: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
             >
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Quantity
                 </label>
                 <input
@@ -278,37 +278,37 @@ const IssueComponent: React.FC = () => {
                   max={selectedComponent?.availableQuantity || 1}
                   value={formData.quantity}
                   onChange={(e) => setFormData(prev => ({ ...prev, quantity: parseInt(e.target.value) }))}
-                  className="w-full px-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500"
+                  className="w-full px-3 md:px-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500 text-sm md:text-base"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Due Date
                 </label>
                 <div className="relative group">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-5 h-5 group-focus-within:text-peacock-300 transition-colors" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-peacock-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-peacock-300 transition-colors" />
                   <input
                     type="date"
                     value={formData.dueDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full pl-10 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500"
+                    className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 group-hover:border-dark-500 text-sm md:text-base"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-peacock-300 text-sm font-semibold mb-2">
+                <label className="block text-peacock-300 text-xs md:text-sm font-semibold mb-2">
                   Purpose
                 </label>
                 <input
                   type="text"
                   value={formData.purpose}
                   onChange={(e) => setFormData(prev => ({ ...prev, purpose: e.target.value }))}
-                  className="w-full px-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500"
+                  className="w-full px-3 md:px-4 py-3 md:py-4 bg-dark-700/50 border border-dark-600 rounded-lg md:rounded-xl text-white placeholder-dark-400 focus:border-peacock-500 focus:ring-2 focus:ring-peacock-500/20 transition-all duration-300 hover:border-dark-500 text-sm md:text-base"
                   placeholder="Project/Lab purpose"
                   required
                 />
@@ -324,11 +324,11 @@ const IssueComponent: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isSubmitting || !formData.componentId}
-              className="w-full group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 md:py-4 rounded-lg md:rounded-xl font-bold text-base md:text-lg shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10 flex items-center justify-center gap-3">
-                <UserPlus className="w-6 h-6 group-hover:animate-bounce" />
+              <div className="relative z-10 flex items-center justify-center gap-2 md:gap-3">
+                <UserPlus className="w-5 h-5 md:w-6 md:h-6 group-hover:animate-bounce" />
                 {isSubmitting ? 'Issuing Component...' : 'Issue Component'}
               </div>
             </motion.button>
